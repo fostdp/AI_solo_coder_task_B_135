@@ -1,0 +1,29 @@
+{
+  "alert": {
+    "min_daily_sunshine_hours": 3.0,
+    "alert_season": ["winter"],
+    "season_months": {
+      "spring": [3, 4, 5],
+      "summer": [6, 7, 8],
+      "autumn": [9, 10, 11],
+      "fall": [9, 10, 11],
+      "winter": [12, 1, 2]
+    },
+    "check_interval_seconds": 3600
+  },
+  "mqtt": {
+    "topic": "mingtang/alerts",
+    "qos": 1,
+    "retain": false,
+    "keepalive": 60,
+    "reconnect_delay": 5
+  },
+  "recommendations": {
+    "low_sunshine": [
+      "检查窗户纸是否破损或积尘",
+      "考虑增加南向窗户面积",
+      "优化室内布局减少遮挡",
+      "使用粒子群算法进行采光优化"
+    ]
+  }
+}
