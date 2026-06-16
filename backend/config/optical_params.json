@@ -1,0 +1,106 @@
+{
+  "materials": {
+    "floor": {
+      "name": "wooden_floor",
+      "albedo": [0.6, 0.5, 0.4],
+      "reflectivity": 0.1,
+      "roughness": 0.8,
+      "transmittance": 0.0,
+      "transparency": 0.0
+    },
+    "wall": {
+      "name": "rammed_earth",
+      "albedo": [0.7, 0.65, 0.55],
+      "reflectivity": 0.05,
+      "roughness": 0.9,
+      "transmittance": 0.0,
+      "transparency": 0.0
+    },
+    "roof": {
+      "name": "ceramic_tile",
+      "albedo": [0.5, 0.3, 0.2],
+      "reflectivity": 0.05,
+      "roughness": 0.95,
+      "transmittance": 0.0,
+      "transparency": 0.0
+    },
+    "column": {
+      "name": "wooden_column",
+      "albedo": [0.4, 0.25, 0.15],
+      "reflectivity": 0.1,
+      "roughness": 0.7,
+      "transmittance": 0.0,
+      "transparency": 0.0
+    },
+    "window": {
+      "name": "paper_window",
+      "albedo": [0.9, 0.9, 0.85],
+      "reflectivity": 0.1,
+      "roughness": 0.3,
+      "transmittance": 0.7,
+      "transparency": 0.0
+    },
+    "ground": {
+      "name": "soil",
+      "albedo": [0.3, 0.25, 0.2],
+      "reflectivity": 0.1,
+      "roughness": 0.95,
+      "transmittance": 0.0,
+      "transparency": 0.0
+    }
+  },
+  "ray_tracer": {
+    "max_depth": 3,
+    "bias": 0.001,
+    "hemisphere_samples": 8,
+    "shadow_attenuation": 0.1
+  },
+  "building": {
+    "length": 20.0,
+    "width": 20.0,
+    "height": 12.0,
+    "wall_thickness": 0.5,
+    "column_size": 0.4,
+    "column_inset": 1.5,
+    "default_windows": [
+      {
+        "position": [0, 10.25, 2],
+        "size": [2.0, 1.5],
+        "normal": [0, 1, 0],
+        "up": [0, 0, 1],
+        "transmittance": 0.7
+      },
+      {
+        "position": [0, -10.25, 2],
+        "size": [2.0, 1.5],
+        "normal": [0, -1, 0],
+        "up": [0, 0, 1],
+        "transmittance": 0.7
+      },
+      {
+        "position": [10.25, 0, 2],
+        "size": [2.0, 1.5],
+        "normal": [1, 0, 0],
+        "up": [0, 0, 1],
+        "transmittance": 0.7
+      },
+      {
+        "position": [-10.25, 0, 2],
+        "size": [2.0, 1.5],
+        "normal": [-1, 0, 0],
+        "up": [0, 0, 1],
+        "transmittance": 0.7
+      }
+    ]
+  },
+  "grid": {
+    "default_resolution": 10,
+    "min_resolution": 5,
+    "max_resolution": 30,
+    "z_levels_ratio": 2,
+    "z_min_levels": 3,
+    "z_bottom_offset": 0.5,
+    "z_top_offset": 0.5
+  },
+  "night_illuminance": 5.0
+}
