@@ -1,0 +1,70 @@
+﻿python : 2026-06-17 06:22:53,662 [INFO] =======================================
+=====================
+所在位置 行:1 字符: 49
++ ... r_task_A_135\backend ; python scripts/regression_test.py 2>&1 | Out-F ...
++                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (2026-06-17 06:2...=============== 
+   :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+2026-06-17 06:22:53,662 [INFO] 明堂采光仿真系统 — 微服务拆分功能回归测试
+2026-06-17 06:22:53,662 [INFO] ================================================
+============
+2026-06-17 06:22:53,662 [INFO] === 1. JSON配置文件测试 ===
+2026-06-17 06:22:53,662 [INFO]   \u2705 PASS: JSON配置: sky_model_params.json
+2026-06-17 06:22:53,662 [INFO]   \u2705 PASS: JSON配置: optical_params.json
+2026-06-17 06:22:53,662 [INFO]   \u2705 PASS: JSON配置: optimizer_params.json
+2026-06-17 06:22:53,663 [INFO]   \u2705 PASS: JSON配置: alarm_params.json
+2026-06-17 06:22:53,663 [INFO] === 2. 天空模型参数合理性测试 ===
+2026-06-17 06:22:53,663 [INFO]   \u2705 PASS: Perez系数维度
+2026-06-17 06:22:53,663 [INFO]   \u2705 PASS: CIE阴天天顶亮度参数
+2026-06-17 06:22:53,663 [INFO]   \u2705 PASS: 默认参数合理性
+2026-06-17 06:22:53,663 [INFO] === 3. 光学参数完整性测试 ===
+2026-06-17 06:22:53,663 [INFO]   \u2705 PASS: 材质参数: floor
+2026-06-17 06:22:53,663 [INFO]   \u2705 PASS: 材质参数: wall
+2026-06-17 06:22:53,663 [INFO]   \u2705 PASS: 材质参数: roof
+2026-06-17 06:22:53,663 [INFO]   \u2705 PASS: 材质参数: column
+2026-06-17 06:22:53,663 [INFO]   \u2705 PASS: 材质参数: window
+2026-06-17 06:22:53,663 [INFO]   \u2705 PASS: 材质参数: ground
+2026-06-17 06:22:53,663 [INFO]   \u2705 PASS: 光线追踪参数
+2026-06-17 06:22:53,663 [INFO]   \u2705 PASS: 建筑几何参数
+2026-06-17 06:22:53,663 [INFO] === 4. 优化器参数测试 ===
+2026-06-17 06:22:53,663 [INFO]   \u2705 PASS: PSO参数合理性
+2026-06-17 06:22:53,663 [INFO]   \u2705 PASS: 优化器边界参数
+2026-06-17 06:22:53,663 [INFO] === 5. 告警参数测试 ===
+2026-06-17 06:22:53,664 [INFO]   \u2705 PASS: 告警阈值参数
+2026-06-17 06:22:53,664 [INFO]   \u2705 PASS: MQTT参数
+2026-06-17 06:22:53,664 [INFO] === 6. 共享Schema模块测试 ===
+2026-06-17 06:22:54,206 [INFO]   \u2705 PASS: Schema模块导入
+2026-06-17 06:22:54,206 [INFO]   \u2705 PASS: SensorDataPoint构建
+2026-06-17 06:22:54,208 [INFO]   \u2705 PASS: SimulationParams构建
+2026-06-17 06:22:54,208 [INFO]   \u2705 PASS: Redis频道常量
+2026-06-17 06:22:54,208 [INFO] === 7. 共享配置模块测试 ===
+2026-06-17 06:22:54,208 [INFO]   \u2705 PASS: SharedSettings字段完整性
+2026-06-17 06:22:54,208 [INFO]   \u2705 PASS: load_json_config加载
+2026-06-17 06:22:54,208 [INFO] === 8. 天空模型(配置驱动)测试 ===
+2026-06-17 06:22:54,218 [ERROR]   \u274c FAIL: CIE阴天模型(配置驱动) — SkyModelParamete
+rs.__init__() got an unexpected keyword argument 'latitude'
+2026-06-17 06:22:54,218 [ERROR]   \u274c FAIL: Perez模型(配置驱动) — cannot access lo
+cal variable 'params' where it is not associated with a value
+2026-06-17 06:22:54,218 [INFO] === 9. 光照计算器(配置驱动)测试 ===
+2026-06-17 06:22:54,218 [INFO]   \u2705 PASS: BuildingGeometry.from_config
+2026-06-17 06:22:54,219 [ERROR]   \u274c FAIL: LightingCalculator(配置驱动)全流程 — Sk
+yModelParameters.__init__() got an unexpected keyword argument 'latitude'
+2026-06-17 06:22:54,219 [INFO] === 10. PSO优化器(配置驱动)测试 ===
+2026-06-17 06:22:54,233 [INFO] Starting Particle Swarm Optimization...
+2026-06-17 06:22:54,233 [INFO] Population size: 10, Max iterations: 5
+2026-06-17 06:22:54,233 [INFO] Number of windows to optimize: 4
+2026-06-17 06:22:54,233 [INFO] Multi-objective: False, Dimension grouping: True
+2026-06-17 06:22:54,243 [INFO] Optimization completed in 0.01 seconds
+2026-06-17 06:22:54,243 [INFO] Best fitness: 0.7993
+2026-06-17 06:22:54,243 [INFO] Uniformity: 347.9473
+2026-06-17 06:22:54,243 [INFO] Average illuminance: 1.35 lux
+2026-06-17 06:22:54,243 [INFO]   \u2705 PASS: PSO优化器(配置驱动)基础运行
+2026-06-17 06:22:54,243 [INFO] Starting Particle Swarm Optimization...
+2026-06-17 06:22:54,243 [INFO] Population size: 10, Max iterations: 5
+2026-06-17 06:22:54,243 [INFO] Number of windows to optimize: 6
+2026-06-17 06:22:54,243 [INFO] Multi-objective: True, Dimension grouping: True
+2026-06-17 06:22:54,249 [ERROR]   \u274c FAIL: PSO多目标优化(配置驱动) — The truth value
+ of an array with more than one element is ambiguous. Use a.any() or a.all()
+2026-06-17 06:22:54,249 [INFO] === 11. Redis Pub/Sub测试 ===
