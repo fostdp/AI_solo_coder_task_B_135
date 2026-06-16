@@ -1,0 +1,64 @@
+{
+  "perez": {
+    "coefficients_luminance": [
+      [0.1787, -1.4630],
+      [-0.3554, 0.4275],
+      [-0.0227, 5.3251],
+      [0.1206, -2.5771],
+      [-0.0670, 0.3703]
+    ],
+    "zenith_luminance": {
+      "a": 4.0453,
+      "b": -4.9710,
+      "c": -0.2155,
+      "d": 2.4192,
+      "tan_coefficient_a": 4,
+      "tan_coefficient_b": 9,
+      "tan_coefficient_c": 120
+    },
+    "direct_irradiance": {
+      "solar_constant": 1367.0,
+      "extinction_coefficient_a": 0.2709,
+      "extinction_coefficient_b": -0.2909
+    },
+    "diffuse_ratio": {
+      "base": 0.095,
+      "turbidity_factor": 0.04,
+      "altitude_scale": 0.5,
+      "base_offset": 50
+    }
+  },
+  "cie_clear": {
+    "zenith_luminance": {
+      "base": 1000,
+      "altitude_decay": 0.025
+    },
+    "direct_irradiance": {
+      "solar_constant": 1367.0,
+      "extinction_factor": 0.678
+    },
+    "diffuse_ratio": 0.15
+  },
+  "cie_overcast": {
+    "zenith_luminance": {
+      "cloud_base": 800,
+      "cloud_altitude_factor": 4000,
+      "cloud_cover_weight": 0.5,
+      "minimum": 50
+    },
+    "cloud_attenuation": 0.95,
+    "cloud_exponent": 2.0,
+    "diffuse": {
+      "clear_scale": 0.005,
+      "clear_minimum": 50,
+      "cloud_zenith_pi_factor": 0.005,
+      "horiz_minimum": 100
+    }
+  },
+  "defaults": {
+    "turbidity": 2.5,
+    "ground_albedo": 0.2,
+    "cloud_cover": 0.0,
+    "solar_constant": 1367.0
+  }
+}
