@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 
 from shared.config import load_json_config
 from .sky_model import SkyModelParameters, create_sky_model, SkyModel
-from .ray_tracer import RayTracer, Ray, Material, Box, Rectangle, Plane
+from .ray_tracer import RayTracer, Ray, Material, Box, Rectangle, Plane, Cylinder, Sphere
 from pysolar.solar import get_altitude, get_azimuth
 
 
@@ -407,3 +407,92 @@ class LightingCalculator:
     def update_windows(self, windows: List[Dict]):
         self.building.windows = windows
         self._build_scene()
+
+    def add_trees(self, trees: List[Dict[str, Any]], season: str = "summer"):
+        tree_params = load_json_config("tree_params.json")
+        species_db = tree_params.get("tree_species", {})
+        seasonal_factors = tree_params.get("seasonal_factors", {})
+        leaf_factor = seasonal_factors.get(season, {}).get("leaf_factor", 1.0)
+
+        for tree_cfg in trees:
+            species_key = tree_cfg.get("species", "pine")
+            species = species_db.get(species_key, species_db.get("pine", {}))
+            scale = tree_cfg.get("scale", 1.0)
+            pos = np.array(tree_cfg.get("position", [0, 0, 0]), dtype=np.float64)
+
+            trunk_radius = species.get("trunk_radius", 0.3) * scale
+            trunk_height = species.get("trunk_height", 6.0) * scale
+            canopy_radius = species.get("canopy_radius", 3.5) * scale
+            canopy_height = species.get("canopy_height", 4.0) * scale
+            canopy_transmittance = species.get("canopy_transmittance", 0.35)
+            albedo = species.get("albedo", [0.15, 0.35, 0.1])
+
+            effective_transmittance = 1.0 - (1.0 - canopy_transmittance) * leaf_factor
+
+            trunk_material = Material(
+                name=f"trunk_{species_key}",
+                albedo=np.array([0.35, 0.2, 0.1]),
+                reflectivity=0.05,
+                roughness=0.9
+            )
+            trunk = Cylinder(
+                base_center=pos,
+                radius=trunk_radius,
+                height=trunk_height,
+                material=trunk_material
+            )
+            self.ray_tracer.add_object(trunk)
+
+            canopy_center = pos + np.array([0, 0, trunk_height + canopy_height * 0.4])
+            canopy_material = Material(
+                name=f"canopy_{species_key}",
+                albedo=np.array(albedo),
+                reflectivity=0.05,
+                roughness=0.95,
+                transmittance=effective_transmittance
+            )
+            canopy = Sphere(
+                center=canopy_center,
+                radius=canopy_radius,
+                material=canopy_material
+            )
+            self.ray_tracer.add_object(canopy)
+
+    def remove_trees(self):
+        self._build_scene()
+
+    @classmethod
+    def from_dynasty(cls, dynasty_key: str, grid_resolution: int = 10) -> 'LightingCalculator':
+        dynasty_params = load_json_config("dynasty_params.json")
+        dynasties = dynasty_params.get("dynasties", {})
+        dynasty = dynasties.get(dynasty_key, dynasties.get("han", {}))
+
+        building_cfg = dynasty.get("building", {})
+        materials_cfg = dynasty.get("materials", {})
+        lat = dynasty.get("latitude", 34.2658)
+        lon = dynasty.get("longitude", 108.9541)
+
+        building = BuildingGeometry(
+            length=building_cfg.get("length", 20.0),
+            width=building_cfg.get("width", 20.0),
+            height=building_cfg.get("height", 12.0),
+            wall_thickness=building_cfg.get("wall_thickness", 0.5),
+            windows=building_cfg.get("default_windows", [])
+        )
+
+        calculator = cls.__new__(cls)
+        calculator.building = building
+        calculator.latitude = lat
+        calculator.longitude = lon
+        calculator.grid_resolution = grid_resolution
+        calculator.ray_tracer = RayTracer(max_depth=3)
+
+        materials: Dict[str, Material] = {}
+        for key, mat_cfg in materials_cfg.items():
+            materials[key] = Material.from_config(key, mat_cfg)
+        if not materials:
+            materials = calculator._create_materials()
+        calculator.building_materials = materials
+        calculator._build_scene()
+
+        return calculator

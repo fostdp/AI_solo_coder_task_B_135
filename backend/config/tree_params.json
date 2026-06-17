@@ -1,0 +1,71 @@
+{
+  "tree_species": {
+    "pine": {
+      "name": "古松",
+      "trunk_radius": 0.3,
+      "trunk_height": 6.0,
+      "canopy_radius": 3.5,
+      "canopy_height": 4.0,
+      "canopy_transmittance": 0.35,
+      "albedo": [0.15, 0.35, 0.1],
+      "leaf_density": 0.65
+    },
+    "ginkgo": {
+      "name": "银杏",
+      "trunk_radius": 0.35,
+      "trunk_height": 5.0,
+      "canopy_radius": 4.0,
+      "canopy_height": 5.0,
+      "canopy_transmittance": 0.40,
+      "albedo": [0.3, 0.45, 0.1],
+      "leaf_density": 0.60
+    },
+    "cypress": {
+      "name": "柏树",
+      "trunk_radius": 0.25,
+      "trunk_height": 7.0,
+      "canopy_radius": 2.5,
+      "canopy_height": 5.0,
+      "canopy_transmittance": 0.30,
+      "albedo": [0.1, 0.3, 0.08],
+      "leaf_density": 0.70
+    },
+    "willow": {
+      "name": "垂柳",
+      "trunk_radius": 0.3,
+      "trunk_height": 4.0,
+      "canopy_radius": 5.0,
+      "canopy_height": 3.5,
+      "canopy_transmittance": 0.50,
+      "albedo": [0.2, 0.4, 0.12],
+      "leaf_density": 0.50
+    },
+    "pagoda_tree": {
+      "name": "国槐",
+      "trunk_radius": 0.35,
+      "trunk_height": 5.5,
+      "canopy_radius": 4.5,
+      "canopy_height": 4.5,
+      "canopy_transmittance": 0.38,
+      "albedo": [0.18, 0.38, 0.1],
+      "leaf_density": 0.62
+    }
+  },
+  "default_layout": {
+    "name": "典型庭院配置",
+    "trees": [
+      {"species": "pine", "position": [12, 0, 0], "scale": 1.0},
+      {"species": "pine", "position": [-12, 0, 0], "scale": 1.0},
+      {"species": "cypress", "position": [0, 12, 0], "scale": 0.9},
+      {"species": "cypress", "position": [0, -12, 0], "scale": 0.9},
+      {"species": "ginkgo", "position": [15, 15, 0], "scale": 1.0},
+      {"species": "ginkgo", "position": [-15, 15, 0], "scale": 1.0}
+    ]
+  },
+  "seasonal_factors": {
+    "spring": {"leaf_factor": 0.7, "description": "新叶萌发，透光率偏高"},
+    "summer": {"leaf_factor": 1.0, "description": "枝叶茂盛，遮蔽最强"},
+    "autumn": {"leaf_factor": 0.6, "description": "叶片脱落，透光率最高"},
+    "winter": {"leaf_factor": 0.2, "description": "落叶树几乎无遮挡（针叶树保持）"}
+  }
+}

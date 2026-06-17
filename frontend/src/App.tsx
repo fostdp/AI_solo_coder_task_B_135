@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useAppStore } from '@/store';
-import { alertAPI } from '@/api';
 import { Mingtang3DModel } from './modules/mingtang_3d';
-import { LightCloudMap, ControlPanel, SensorPanel, AlertNotification } from './modules/daylight_panel';
+import { LightCloudMap, ControlPanel, SensorPanel, AlertNotification, DynastyComparisonPanel, StandardsComparisonPanel, TreeImpactPanel, VirtualTourPanel } from './modules/daylight_panel';
 
 const App: React.FC = () => {
-  const { simulationResult, latestSensorData, optimizedWindows, selectedHour, selectedDate } = useAppStore();
+  const { simulationResult, latestSensorData, optimizedWindows, selectedHour, selectedDate, virtualTourResult, virtualTourHour, virtualTourPlaying } = useAppStore();
   const [cloudMapSize, setCloudMapSize] = useState({ width: 600, height: 500 });
   const [activeView, setActiveView] = useState<'3d' | 'cloud'>('3d');
+  const [activeFeatureTab, setActiveFeatureTab] = useState<'simulation' | 'dynasty' | 'standards' | 'trees' | 'tour'>('simulation');
   const [connected, setConnected] = useState(true);
 
   useEffect(() => {
@@ -87,21 +87,42 @@ const App: React.FC = () => {
     ? latestSensorData[0].solar_azimuth
     : 180;
 
+  const activeSolarAltitude = virtualTourResult
+    ? (virtualTourResult.hourly_data.find(h => Math.abs(h.hour - virtualTourHour) < 0.5)?.solar_altitude ?? solarAltitude)
+    : solarAltitude;
+  const activeSolarAzimuth = virtualTourResult
+    ? (virtualTourResult.hourly_data.find(h => Math.abs(h.hour - virtualTourHour) < 0.5)?.solar_azimuth ?? solarAzimuth)
+    : solarAzimuth;
+
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
     const months = ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二'];
     return `${months[date.getMonth()]}月${date.getDate()}日`;
   };
 
+  const formatHour = (h: number) => {
+    const hours = Math.floor(h);
+    const mins = Math.round((h - hours) * 60);
+    return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+  };
+
+  const featureTabs = [
+    { key: 'simulation', label: '采光仿真', icon: '☀️' },
+    { key: 'dynasty', label: '朝代对比', icon: '🏛️' },
+    { key: 'standards', label: '标准对比', icon: '📏' },
+    { key: 'trees', label: '树木影响', icon: '🌳' },
+    { key: 'tour', label: '虚拟参观', icon: '🎥' },
+  ] as const;
+
   return (
     <div className="w-full h-screen flex flex-col bg-[#0a0a1a] overflow-hidden">
-      <header className="h-16 border-b border-white/10 flex items-center justify-between px-6 bg-gradient-to-r from-black/50 to-transparent">
+      <header className="h-14 border-b border-white/10 flex items-center justify-between px-6 bg-gradient-to-r from-black/50 to-transparent">
         <div className="flex items-center gap-4">
           <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-ancient-wood to-ancient-gold flex items-center justify-center">
             <span className="text-xl">🏛️</span>
           </div>
           <div>
-            <h1 className="ancient-title text-xl">古代明堂建筑采光仿真与日照优化系统</h1>
+            <h1 className="ancient-title text-lg">古代明堂建筑采光仿真与日照优化系统</h1>
             <p className="text-xs text-gray-500">汉长安明堂遗址数字化复原研究平台</p>
           </div>
         </div>
@@ -116,7 +137,10 @@ const App: React.FC = () => {
 
           <div className="text-right">
             <div className="text-sm text-gray-300">{formatDate(selectedDate)}</div>
-            <div className="text-xs text-ancient-gold">{selectedHour.toString().padStart(2, '0')}:00</div>
+            <div className="text-xs text-ancient-gold">
+              {virtualTourResult ? formatHour(virtualTourHour) : `${selectedHour.toString().padStart(2, '0')}:00`}
+              {virtualTourPlaying && ' ▶'}
+            </div>
           </div>
 
           <div className="relative">
@@ -149,7 +173,7 @@ const App: React.FC = () => {
       </header>
 
       <div className="flex-1 flex overflow-hidden">
-        <aside className="w-80 border-r border-white/10 flex flex-col">
+        <aside className="w-72 border-r border-white/10 flex flex-col">
           <SensorPanel />
         </aside>
 
@@ -157,8 +181,8 @@ const App: React.FC = () => {
           {activeView === '3d' ? (
             <div className="w-full h-full">
               <Mingtang3DModel
-                solarAltitude={solarAltitude}
-                solarAzimuth={solarAzimuth}
+                solarAltitude={activeSolarAltitude}
+                solarAzimuth={activeSolarAzimuth}
                 windows={optimizedWindows}
               />
             </div>
@@ -176,8 +200,8 @@ const App: React.FC = () => {
             <div className="glass-panel px-3 py-2 text-xs">
               <div className="text-gray-400 mb-1">太阳位置</div>
               <div className="flex gap-4">
-                <span>高度: <span className="text-ancient-gold">{solarAltitude.toFixed(1)}°</span></span>
-                <span>方位: <span className="text-ancient-gold">{solarAzimuth.toFixed(1)}°</span></span>
+                <span>高度: <span className="text-ancient-gold">{activeSolarAltitude.toFixed(1)}°</span></span>
+                <span>方位: <span className="text-ancient-gold">{activeSolarAzimuth.toFixed(1)}°</span></span>
               </div>
             </div>
 
@@ -186,11 +210,25 @@ const App: React.FC = () => {
                 <div className="text-gray-400 mb-1">采光指标</div>
                 <div className="flex gap-4">
                   <span>平均: <span className="text-sensor-good">{(simulationResult.avg_illuminance).toFixed(0)} lux</span></span>
-                  <span>均匀度: <span className={`${
+                  <span>均匀度: </span><span className={`${
                     simulationResult.uniformity > 0.7 ? 'text-sensor-good' :
                     simulationResult.uniformity > 0.5 ? 'text-sensor-warning' : 'text-sensor-danger'
                   }`}>
                     {(simulationResult.uniformity * 100).toFixed(1)}%
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {virtualTourResult && (
+              <div className="glass-panel px-3 py-2 text-xs">
+                <div className="text-gray-400 mb-1">虚拟参观</div>
+                <div className="flex gap-4">
+                  <span>照度: <span className="text-sensor-good">
+                    {(virtualTourResult.hourly_data.find(h => Math.abs(h.hour - virtualTourHour) < 0.5)?.avg_illuminance ?? 0).toFixed(0)} lux
+                  </span></span>
+                  <span>均匀度: <span className="text-ancient-gold">
+                    {((virtualTourResult.hourly_data.find(h => Math.abs(h.hour - virtualTourHour) < 0.5)?.uniformity ?? 0) * 100).toFixed(1)}%
                   </span></span>
                 </div>
               </div>
@@ -208,11 +246,35 @@ const App: React.FC = () => {
         </main>
 
         <aside className="w-96 border-l border-white/10 flex flex-col">
-          <ControlPanel />
+          <div className="flex border-b border-white/10">
+            {featureTabs.map(tab => (
+              <button
+                key={tab.key}
+                onClick={() => setActiveFeatureTab(tab.key as any)}
+                className={`flex-1 py-2 text-xs transition-colors ${
+                  activeFeatureTab === tab.key
+                    ? 'bg-ancient-wood/30 text-ancient-gold border-b-2 border-ancient-gold'
+                    : 'text-gray-400 hover:text-gray-200'
+                }`}
+                title={tab.label}
+              >
+                <span className="block text-sm">{tab.icon}</span>
+                <span className="block mt-0.5 text-[10px]">{tab.label}</span>
+              </button>
+            ))}
+          </div>
+
+          <div className="flex-1 overflow-y-auto">
+            {activeFeatureTab === 'simulation' && <ControlPanel />}
+            {activeFeatureTab === 'dynasty' && <DynastyComparisonPanel />}
+            {activeFeatureTab === 'standards' && <StandardsComparisonPanel />}
+            {activeFeatureTab === 'trees' && <TreeImpactPanel />}
+            {activeFeatureTab === 'tour' && <VirtualTourPanel />}
+          </div>
         </aside>
       </div>
 
-      <footer className="h-8 border-t border-white/10 flex items-center justify-between px-6 text-xs text-gray-500">
+      <footer className="h-7 border-t border-white/10 flex items-center justify-between px-6 text-xs text-gray-500">
         <div>
           汉长安明堂 · 建于西汉元始四年（公元4年）· 遗址坐标: 34.265°N, 108.954°E
         </div>

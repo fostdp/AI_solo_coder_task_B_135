@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { SensorData, SimulationParams, SimulationStatus, AlertRecord, WindowSolution } from '@/types';
+import type { SensorData, SimulationParams, SimulationStatus, AlertRecord, WindowSolution, DynastyKey, TreeConfig } from '@/types';
 
 const dtuReceiverAPI = axios.create({
   baseURL: '/dtu/api',
@@ -8,7 +8,7 @@ const dtuReceiverAPI = axios.create({
 
 const daylightSimulatorAPI = axios.create({
   baseURL: '/daylight/api',
-  timeout: 60000,
+  timeout: 120000,
 });
 
 const sunlightOptimizerAPI = axios.create({
@@ -100,6 +100,71 @@ export const alertAPI = {
 
   sendTest: (hall_id: string = 'han_changan_mingtang') =>
     alarmMqttAPI.post('/alert/test', null, { params: { hall_id } }),
+};
+
+export const featureAPI = {
+  getDynastyList: () =>
+    daylightSimulatorAPI.get('/features/dynasty-list'),
+
+  getDynastyConfig: (dynastyKey: DynastyKey) =>
+    daylightSimulatorAPI.get(`/features/dynasty-config/${dynastyKey}`),
+
+  runDynastyComparison: (params: {
+    dynasties: DynastyKey[];
+    date: string;
+    hour: number;
+    sky_model?: string;
+    grid_resolution?: number;
+    turbidity?: number;
+  }) =>
+    daylightSimulatorAPI.post('/features/dynasty-comparison/run', params),
+
+  getDynastyComparisonStatus: (task_id: string) =>
+    daylightSimulatorAPI.get(`/features/dynasty-comparison/status/${task_id}`),
+
+  getStandardsComparison: (params: {
+    dynasty: DynastyKey;
+    avg_illuminance: number;
+    min_illuminance: number;
+    uniformity: number;
+  }) =>
+    daylightSimulatorAPI.get('/features/standards-comparison', { params }),
+
+  getStandardsList: () =>
+    daylightSimulatorAPI.get('/features/standards-list'),
+
+  getTreeSpecies: () =>
+    daylightSimulatorAPI.get('/features/tree-species'),
+
+  runTreeImpact: (params: {
+    date: string;
+    hour: number;
+    dynasty: DynastyKey;
+    trees: TreeConfig[];
+    season: string;
+    sky_model?: string;
+    grid_resolution?: number;
+    turbidity?: number;
+  }) =>
+    daylightSimulatorAPI.post('/features/tree-impact/run', params),
+
+  getTreeImpactStatus: (task_id: string) =>
+    daylightSimulatorAPI.get(`/features/tree-impact/status/${task_id}`),
+
+  runVirtualTour: (params: {
+    dynasty: DynastyKey;
+    date: string;
+    start_hour: number;
+    end_hour: number;
+    time_step?: number;
+    sky_model?: string;
+    grid_resolution?: number;
+    turbidity?: number;
+  }) =>
+    daylightSimulatorAPI.post('/features/virtual-tour/run', params),
+
+  getVirtualTourStatus: (task_id: string) =>
+    daylightSimulatorAPI.get(`/features/virtual-tour/status/${task_id}`),
 };
 
 export { dtuReceiverAPI, daylightSimulatorAPI, sunlightOptimizerAPI, alarmMqttAPI };

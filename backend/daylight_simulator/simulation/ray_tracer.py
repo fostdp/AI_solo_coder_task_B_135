@@ -195,6 +195,114 @@ class Box(Geometry):
         return self.min, self.max
 
 
+class Cylinder(Geometry):
+    def __init__(self, base_center: np.ndarray, radius: float, height: float, material: Material):
+        super().__init__(material)
+        self.base = np.array(base_center, dtype=np.float64)
+        self.radius = radius
+        self.height = height
+        self.axis = np.array([0, 0, 1], dtype=np.float64)
+
+    def intersect(self, ray: Ray, t_min: float = 0.001, t_max: float = 1e6) -> Intersection:
+        d = ray.direction
+        o = ray.origin - self.base
+
+        a = d[0]**2 + d[1]**2
+        b = 2 * (o[0] * d[0] + o[1] * d[1])
+        c = o[0]**2 + o[1]**2 - self.radius**2
+
+        discriminant = b**2 - 4 * a * c
+        if discriminant < 0:
+            return Intersection(False, np.zeros(3), np.zeros(3), 0, self.material)
+
+        sqrt_disc = np.sqrt(discriminant)
+        t0 = (-b - sqrt_disc) / (2 * a + 1e-10)
+        t1 = (-b + sqrt_disc) / (2 * a + 1e-10)
+
+        best_t = t_max
+        hit_normal = np.zeros(3)
+        is_side = False
+
+        for t_cand in [t0, t1]:
+            if t_cand < t_min or t_cand > t_max:
+                continue
+            hit_z = ray.origin[2] + t_cand * d[2]
+            if self.base[2] <= hit_z <= self.base[2] + self.height:
+                if t_cand < best_t:
+                    best_t = t_cand
+                    hit_point = ray.point_at(t_cand)
+                    n = hit_point - self.base
+                    hit_normal = np.array([n[0], n[1], 0])
+                    norm = np.linalg.norm(hit_normal)
+                    if norm > 0:
+                        hit_normal /= norm
+                    is_side = True
+
+        for z_val, n_z in [(self.base[2], -1.0), (self.base[2] + self.height, 1.0)]:
+            if abs(d[2]) < 1e-10:
+                continue
+            t_cap = (z_val - ray.origin[2]) / d[2]
+            if t_cap < t_min or t_cap >= best_t:
+                continue
+            x_hit = ray.origin[0] + t_cap * d[0] - self.base[0]
+            y_hit = ray.origin[1] + t_cap * d[1] - self.base[1]
+            if x_hit**2 + y_hit**2 <= self.radius**2:
+                best_t = t_cap
+                hit_normal = np.array([0, 0, n_z])
+                is_side = False
+
+        if best_t >= t_max:
+            return Intersection(False, np.zeros(3), np.zeros(3), 0, self.material)
+
+        if np.dot(hit_normal, ray.direction) > 0:
+            hit_normal = -hit_normal
+
+        return Intersection(True, ray.point_at(best_t), hit_normal, best_t, self.material)
+
+    def get_bounding_box(self) -> Tuple[np.ndarray, np.ndarray]:
+        r = self.radius
+        return (self.base + np.array([-r, -r, 0]),
+                self.base + np.array([r, r, self.height]))
+
+
+class Sphere(Geometry):
+    def __init__(self, center: np.ndarray, radius: float, material: Material):
+        super().__init__(material)
+        self.center = np.array(center, dtype=np.float64)
+        self.radius = radius
+
+    def intersect(self, ray: Ray, t_min: float = 0.001, t_max: float = 1e6) -> Intersection:
+        oc = ray.origin - self.center
+        a = np.dot(ray.direction, ray.direction)
+        b = 2.0 * np.dot(oc, ray.direction)
+        c = np.dot(oc, oc) - self.radius**2
+
+        discriminant = b**2 - 4 * a * c
+        if discriminant < 0:
+            return Intersection(False, np.zeros(3), np.zeros(3), 0, self.material)
+
+        sqrt_disc = np.sqrt(discriminant)
+        t0 = (-b - sqrt_disc) / (2 * a)
+        t1 = (-b + sqrt_disc) / (2 * a)
+
+        t = t0 if t0 >= t_min else t1
+        if t < t_min or t > t_max:
+            return Intersection(False, np.zeros(3), np.zeros(3), 0, self.material)
+
+        hit_point = ray.point_at(t)
+        normal = (hit_point - self.center) / self.radius
+
+        if np.dot(normal, ray.direction) > 0:
+            normal = -normal
+
+        return Intersection(True, hit_point, normal, t, self.material)
+
+    def get_bounding_box(self) -> Tuple[np.ndarray, np.ndarray]:
+        r = self.radius
+        return (self.center - np.array([r, r, r]),
+                self.center + np.array([r, r, r]))
+
+
 class RayTracer:
     """光线追踪器 - 从optical_params.json加载默认参数"""
 

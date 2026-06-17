@@ -1,0 +1,72 @@
+{
+  "modern_standards": {
+    "gb50033_2013": {
+      "name": "建筑采光设计标准 GB 50033-2013",
+      "country": "中国",
+      "year": 2013,
+      "metrics": {
+        "daylight_factor_min": {"value": 2.0, "unit": "%", "description": "采光系数最低值（居住建筑）"},
+        "daylight_factor_avg": {"value": 4.0, "unit": "%", "description": "采光系数平均值（办公建筑）"},
+        "illuminance_min": {"value": 300, "unit": "lux", "description": "室内最低照度要求"},
+        "illuminance_avg": {"value": 450, "unit": "lux", "description": "室内平均照度要求"},
+        "uniformity_min": {"value": 0.7, "unit": "", "description": "采光均匀度最低值"},
+        "dgp_max": {"value": 0.45, "unit": "", "description": "最大日光眩光概率"},
+        "da300": {"value": 55, "unit": "%", "description": "DA300满足百分比"},
+        "udi_100_3000": {"value": 80, "unit": "%", "description": "UDI 100-3000lux满足百分比"}
+      }
+    },
+    "en_17037_2019": {
+      "name": "EN 17037 Daylight in Buildings",
+      "country": "欧洲",
+      "year": 2019,
+      "metrics": {
+        "daylight_factor_min": {"value": 1.5, "unit": "%", "description": "采光系数最低值"},
+        "daylight_factor_avg": {"value": 3.0, "unit": "%", "description": "采光系数平均值"},
+        "illuminance_min": {"value": 300, "unit": "lux", "description": "室内最低照度"},
+        "illuminance_avg": {"value": 500, "unit": "lux", "description": "室内平均照度"},
+        "uniformity_min": {"value": 0.6, "unit": "", "description": "均匀度最低值"},
+        "dgp_max": {"value": 0.40, "unit": "", "description": "最大日光眩光概率"},
+        "da300": {"value": 50, "unit": "%", "description": "DA300满足百分比"},
+        "udi_100_3000": {"value": 75, "unit": "%", "description": "UDI 100-3000lux满足百分比"}
+      }
+    },
+    "lea_v4": {
+      "name": "LEED v4.1 EQ Credit: Daylight",
+      "country": "美国",
+      "year": 2021,
+      "metrics": {
+        "daylight_factor_min": {"value": 2.0, "unit": "%", "description": "采光系数最低值"},
+        "daylight_factor_avg": {"value": 3.5, "unit": "%", "description": "采光系数平均值"},
+        "illuminance_min": {"value": 300, "unit": "lux", "description": "最低照度"},
+        "illuminance_avg": {"value": 400, "unit": "lux", "description": "平均照度"},
+        "uniformity_min": {"value": 0.65, "unit": "", "description": "均匀度最低值"},
+        "dgp_max": {"value": 0.40, "unit": "", "description": "最大日光眩光概率"},
+        "da300": {"value": 55, "unit": "%", "description": "DA300满足百分比"},
+        "udi_100_3000": {"value": 75, "unit": "%", "description": "UDI 100-3000lux满足百分比"}
+      }
+    },
+    "ancient_ideal": {
+      "name": "古代明堂理想采光基准",
+      "country": "中国（古代）",
+      "year": -4,
+      "metrics": {
+        "daylight_factor_min": {"value": 1.0, "unit": "%", "description": "推测采光系数最低值"},
+        "daylight_factor_avg": {"value": 2.5, "unit": "%", "description": "推测采光系数平均值"},
+        "illuminance_min": {"value": 100, "unit": "lux", "description": "仪式活动最低照度需求"},
+        "illuminance_avg": {"value": 300, "unit": "lux", "description": "仪式活动平均照度需求"},
+        "uniformity_min": {"value": 0.4, "unit": "", "description": "古代均匀度期望（无量化标准）"},
+        "dgp_max": {"value": 0.55, "unit": "", "description": "古代不关注眩光"},
+        "da300": {"value": 30, "unit": "%", "description": "DA300推测值"},
+        "udi_100_3000": {"value": 50, "unit": "%", "description": "UDI推测值"}
+      }
+    }
+  },
+  "comparison_categories": [
+    {"key": "daylight_factor_min", "label": "采光系数最低值(%)", "weight": 0.15},
+    {"key": "daylight_factor_avg", "label": "采光系数平均值(%)", "weight": 0.15},
+    {"key": "illuminance_min", "label": "最低照度(lux)", "weight": 0.20},
+    {"key": "illuminance_avg", "label": "平均照度(lux)", "weight": 0.20},
+    {"key": "uniformity_min", "label": "均匀度", "weight": 0.15},
+    {"key": "da300", "label": "DA300(%)", "weight": 0.15}
+  ]
+}

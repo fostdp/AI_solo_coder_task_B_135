@@ -22,6 +22,7 @@ from .simulation.ray_tracer import RayTracer, Ray, Intersection
 from .simulation.lighting_calc import LightingCalculator, IlluminanceResult
 from .services.simulation_service import get_simulation_service
 from .api.simulation import router as simulation_router
+from .api.features import router as features_router
 
 logging.basicConfig(
     level=logging.INFO,
@@ -95,6 +96,7 @@ app.add_middleware(
 )
 
 app.include_router(simulation_router, prefix="/api")
+app.include_router(features_router, prefix="/api")
 
 
 @app.get("/", tags=["系统"])
@@ -112,6 +114,10 @@ async def root():
             "tasks": "/api/simulation/tasks",
             "cancel": "/api/simulation/cancel/{task_id}",
             "result": "/api/simulation/result/{task_id}",
+            "dynasty_comparison": "/api/features/dynasty-comparison/run",
+            "standards_comparison": "/api/features/standards-comparison",
+            "tree_impact": "/api/features/tree-impact/run",
+            "virtual_tour": "/api/features/virtual-tour/run",
         }
     }
 

@@ -8,5 +8,7 @@ export {
   ROOF_MATERIAL,
   WINDOW_MATERIAL,
   GOLD_DECORATION,
+  DYNASTY_BUILDING_CONFIGS,
+  TREE_COLORS,
 } from './buildingData';
 export type { BuildingDimensions, WindowConfig } from './types';

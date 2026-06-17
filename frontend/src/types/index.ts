@@ -82,3 +82,122 @@ export interface WindowConfig {
   up: [number, number, number];
   transmittance: number;
 }
+
+export type DynastyKey = 'han' | 'tang' | 'ming';
+
+export interface DynastyInfo {
+  key: DynastyKey;
+  name: string;
+  year: string;
+  description: string;
+  color_scheme: {
+    primary: string;
+    accent: string;
+    roof: string;
+  };
+}
+
+export interface DynastySimulationResult {
+  dynasty: DynastyKey;
+  dynasty_name: string;
+  year: string;
+  avg_illuminance: number;
+  min_illuminance: number;
+  max_illuminance: number;
+  uniformity: number;
+  grid_size: { x: number; y: number; z: number };
+  illuminance_matrix: number[][][];
+  solar_altitude: number;
+  solar_azimuth: number;
+  building_specs: {
+    length: number;
+    width: number;
+    height: number;
+    windows_count: number;
+    window_transmittance: number;
+  };
+}
+
+export interface StandardCompliance {
+  standard_key: string;
+  standard_name: string;
+  country: string;
+  year: number;
+  dynasty: string;
+  dynasty_name: string;
+  simulated_metrics: Record<string, number>;
+  standards_compliance: Record<string, {
+    standard_value: number;
+    simulated_value: number;
+    compliance_ratio: number;
+    pass: boolean;
+  }>;
+  overall_score: number;
+}
+
+export interface TreeSpecies {
+  key: string;
+  name: string;
+  trunk_radius: number;
+  canopy_radius: number;
+  canopy_transmittance: number;
+}
+
+export interface TreeConfig {
+  species: string;
+  position: number[];
+  scale: number;
+}
+
+export interface TreeImpactResult {
+  without_trees: {
+    avg_illuminance: number;
+    min_illuminance: number;
+    max_illuminance: number;
+    uniformity: number;
+    illuminance_matrix: number[][][];
+  };
+  with_trees: {
+    avg_illuminance: number;
+    min_illuminance: number;
+    max_illuminance: number;
+    uniformity: number;
+    illuminance_matrix: number[][][];
+  };
+  illuminance_reduction_pct: number;
+  uniformity_change: number;
+  shaded_area_pct: number;
+  tree_details: Array<{
+    species: string;
+    species_name: string;
+    position: number[];
+    canopy_radius: number;
+    canopy_height: number;
+    transmittance: number;
+  }>;
+}
+
+export interface VirtualTourHourData {
+  hour: number;
+  solar_altitude: number;
+  solar_azimuth: number;
+  avg_illuminance: number;
+  min_illuminance: number;
+  max_illuminance: number;
+  uniformity: number;
+  illuminance_matrix?: number[][][];
+}
+
+export interface VirtualTourResult {
+  dynasty: DynastyKey;
+  dynasty_name: string;
+  date: string;
+  latitude: number;
+  longitude: number;
+  hourly_data: VirtualTourHourData[];
+  sun_path: Array<{
+    hour: number;
+    altitude: number;
+    azimuth: number;
+  }>;
+}
