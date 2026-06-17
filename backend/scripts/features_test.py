@@ -221,16 +221,25 @@ class FeaturesTestSuite:
             with open(filepath, 'r', encoding='utf-8') as f:
                 data = json.load(f)
             assert 'modern_standards' in data, "缺少modern_standards"
+            assert 'ancient_benchmarks' in data, "缺少ancient_benchmarks"
             assert 'comparison_categories' in data, "缺少comparison_categories"
 
-            standards = data['modern_standards']
-            for key in ['gb50033_2013', 'en_17037_2019', 'lea_v4', 'ancient_ideal']:
-                assert key in standards, f"缺少标准: {key}"
-                s = standards[key]
-                assert 'name' in s, f"{key}缺少name"
-                assert 'metrics' in s, f"{key}缺少metrics"
+            modern = data['modern_standards']
+            ancient = data['ancient_benchmarks']
+            assert isinstance(modern, list), "modern_standards应为list结构"
+            assert isinstance(ancient, list), "ancient_benchmarks应为list结构"
+
+            modern_keys = {s['key'] for s in modern}
+            ancient_keys = {s['key'] for s in ancient}
+            for key in ['gb50033_2013', 'en17037_2019', 'leed_v4_1']:
+                assert key in modern_keys, f"现代标准中缺少: {key}"
+            assert 'ancient_ideal' in ancient_keys, "古代基准中缺少: ancient_ideal"
+
+            for s in modern + ancient:
+                assert 'full_name' in s, f"{s.get('key', '?')}缺少full_name"
+                assert 'metrics' in s, f"{s.get('key', '?')}缺少metrics"
                 for m_key in ['daylight_factor_min', 'daylight_factor_avg', 'illuminance_avg']:
-                    assert m_key in s['metrics'], f"{key}缺少metric.{m_key}"
+                    assert m_key in s['metrics'], f"{s.get('key', '?')}缺少metric.{m_key}"
 
             cats = data['comparison_categories']
             assert len(cats) >= 5, "至少5个对比维度"
